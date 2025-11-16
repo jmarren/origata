@@ -2,24 +2,26 @@
 services:
 
   db_service:
-    # build: 
-      # context: ./db
+    build: 
+      context: .
     image: postgres:16.8
     restart: unless-stopped
     ports: 
       -  5433:5432
     shm_size: 128mb
     environment:
-      PGUSER: ${PGUSER}  # Username for the database
-      PGPASSWORD: ${PGPASSWORD} # Password for the database user
-      PGDATABASE: ${PGDATABASE} # Name of the database to create
+      POSTGRES_USER: ${PGUSER}  # Username for the database
+      POSTGRES_PASSWORD: ${PGPASSWORD} # Password for the database user
+      POSTGRES_DATABASE: ${PGDATABASE} # Name of the database to create
   
     healthcheck:
-      test: ["CMD-SHELL","pg_isready -U ${PGUSER} -d ${PGDATABASE} -h localhost"]
+      test: ["CMD-SHELL","pg_isready -d postgres -h localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+    volumes: 
+     - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
    
   app:
     build: 
