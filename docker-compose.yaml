@@ -2,18 +2,17 @@
 services:
 
   db_service:
-    build: 
-      context: .
-    image: postgres:16.8
+    # build: 
+    #   context: .
+    image: supabase/postgres
     restart: unless-stopped
     ports: 
       -  5433:5432
-    shm_size: 128mb
     environment:
       POSTGRES_USER: ${PGUSER}  # Username for the database
-      POSTGRES_PASSWORD: ${PGPASSWORD} # Password for the database user
+      POSTGRES_PASSWORD: postgres # Password for the database user
       POSTGRES_DATABASE: ${PGDATABASE} # Name of the database to create
-  
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf 
     healthcheck:
       test: ["CMD-SHELL","pg_isready -d postgres -h localhost"]
       interval: 10s
